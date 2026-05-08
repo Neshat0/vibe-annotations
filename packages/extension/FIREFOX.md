@@ -7,23 +7,16 @@
 3. Select `packages/extension/manifest.json` from your cloned repository.
 4. Pin the extension and open the popup from the toolbar.
 
-## MV3 service worker (required)
+## Manifest mode
 
-The Firefox Developer Edition/Nightly MV3 manifest (`manifest.json`) requires MV3 service workers to be enabled:
-
-1. Open `about:config`.
-2. Set `extensions.manifestV3.enabled` to `true`.
-3. Set `extensions.backgroundServiceWorker.enabled` to `true`.
-4. Restart Firefox and load the add-on again.
-
-If those prefs are missing or locked, use Firefox Developer Edition or Nightly (MV3 service workers are not fully supported in stable releases).
+This fork uses a Firefox-compatible **MV2** manifest with an event background page (`background/background.html`), plus Firefox API shims/fallback injection for enabled sites.
 
 ## Permissions and behavior notes
 
-- The extension auto-runs on localhost-style URLs declared in `host_permissions`.
+- The extension auto-runs on localhost-style URLs declared in `permissions` URL patterns.
 - Non-local sites require permission grant from the popup (`Enable for this site` / `Enable for all sites`).
 - `file:///*` access in Firefox requires enabling local file access for the extension in `about:addons` after loading.
-- Firefox may behave differently for dynamic content-script registration; this extension includes a fallback injector for enabled sites.
+- Dynamic content-script registration can vary by Firefox build; extension includes fallback injector for enabled sites.
 
 ## Quick test checklist
 
@@ -32,11 +25,16 @@ If those prefs are missing or locked, use Firefox Developer Edition or Nightly (
 3. Reload the page and confirm overlay hidden/visible state persists.
 4. Open Browser Console (`Ctrl+Shift+J`) and verify background/content scripts have no uncaught extension errors.
 
-## Package zip for testing
+## Package for private submission (.xpi/.zip)
 
 From the repo root:
 
 ```bash
 cd packages/extension
-zip -r /tmp/vibe-annotations-firefox.zip . -x "*.DS_Store" -x "__MACOSX/*"
+rm -f /tmp/vibe-annotations-firefox-private.zip /tmp/vibe-annotations-firefox-private.xpi
+zip -r /tmp/vibe-annotations-firefox-private.zip . \
+  -x "*.DS_Store" -x "__MACOSX/*" -x "*.git*" -x "web-ext-artifacts/*"
+cp /tmp/vibe-annotations-firefox-private.zip /tmp/vibe-annotations-firefox-private.xpi
 ```
+
+Upload `/tmp/vibe-annotations-firefox-private.xpi` in AMO private/unlisted flow.
