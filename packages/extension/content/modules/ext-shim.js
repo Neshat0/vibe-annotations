@@ -1,7 +1,7 @@
 (function initExtShim() {
-  const runtimeApi = globalThis.browser ?? globalThis.chrome;
-  if (!runtimeApi) {
+  const webExtensionsApi = globalThis.browser ?? globalThis.chrome;
+  if (!webExtensionsApi) {
     throw new Error('WebExtensions API is unavailable');
   }
-  globalThis.ext = runtimeApi;
+  globalThis.ext = webExtensionsApi;
 })();
