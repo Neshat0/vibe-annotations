@@ -384,14 +384,15 @@ class VibeAnnotationsBackground {
     if (!ext.scripting?.executeScript) return;
     try {
       await ext.scripting.executeScript({ target: { tabId }, files: CONTENT_SCRIPT_FILES });
-      this._injectedTabUrls.set(tabId, url);
       try {
         await ext.scripting.executeScript({ target: { tabId }, files: ['content/bridge-api.js'], world: 'MAIN' });
       } catch (worldError) {
         console.warn('MAIN world bridge injection failed, retrying isolated world:', worldError);
         await ext.scripting.executeScript({ target: { tabId }, files: ['content/bridge-api.js'] });
       }
+      this._injectedTabUrls.set(tabId, url);
     } catch (err) {
+      this._injectedTabUrls.delete(tabId);
       console.error('Failed to inject content scripts:', err);
     }
   }

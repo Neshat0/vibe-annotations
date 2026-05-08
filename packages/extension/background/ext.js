@@ -1,5 +1,6 @@
 export const ext = globalThis.browser ?? globalThis.chrome;
 
 export function supportsDynamicContentScriptRegistration() {
-  return !!(ext?.scripting?.registerContentScripts && ext?.scripting?.unregisterContentScripts);
+  return typeof ext?.scripting?.registerContentScripts === 'function'
+    && typeof ext?.scripting?.unregisterContentScripts === 'function';
 }
