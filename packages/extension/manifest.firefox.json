@@ -112,6 +112,7 @@
     "persistent": false
   },
   "web_accessible_resources": [
+    "content/bridge-api.js",
     "assets/fonts/InterVariable.woff2",
     "assets/icons/icon-hq.png"
   ]

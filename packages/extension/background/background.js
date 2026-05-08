@@ -394,7 +394,25 @@ class VibeAnnotationsBackground {
         for (const file of CONTENT_SCRIPT_FILES) {
           await ext.tabs.executeScript(tabId, { file, allFrames: true });
         }
-        await ext.tabs.executeScript(tabId, { file: 'content/bridge-api.js', allFrames: true });
+        const bridgeUrl = ext.runtime.getURL('content/bridge-api.js');
+        try {
+          await ext.tabs.executeScript(tabId, {
+            allFrames: true,
+            code: `
+              (function() {
+                if (document.getElementById('vibe-bridge-api')) return;
+                const script = document.createElement('script');
+                script.id = 'vibe-bridge-api';
+                script.src = ${JSON.stringify(bridgeUrl)};
+                script.type = 'text/javascript';
+                (document.head || document.documentElement).appendChild(script);
+              })();
+            `
+          });
+        } catch (worldError) {
+          console.warn('MAIN world bridge injection failed, retrying isolated world:', worldError);
+          await ext.tabs.executeScript(tabId, { file: 'content/bridge-api.js', allFrames: true });
+        }
       } else {
         return;
       }
